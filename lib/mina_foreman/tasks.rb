@@ -24,6 +24,13 @@ namespace :foreman do
       echo "-----> Exporting foreman procfile for #{fetch(:foreman_app)}"
       #{echo_cmd %[cd #{fetch(:current_path)} ; #{export_cmd}]}
     }
+
+    if fetch(:foreman_format) == 'systemd'
+      command %{
+        echo "-----> Reloading SystemD units for #{fetch(:foreman_app)}"
+        #{echo_cmd %[#{sudo_cmd} systemctl daemon-reload]}
+      }
+    end
   end
 
   desc "Start the application services"
