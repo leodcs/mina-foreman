@@ -1,6 +1,6 @@
 set :foreman_app, -> { "#{fetch(:domain)}_#{fetch(:rails_env)}" }
 set :foreman_user, -> { fetch(:user) }
-set :foreman_log,  -> { "#{fetch(:deploy_to)}/#{fetch(:shared_path)}/log" }
+set :foreman_log,  -> { "#{fetch(:shared_path)}/log" }
 set :foreman_sudo, true
 set :foreman_format, 'upstart'
 set :foreman_location, '/etc/init'
