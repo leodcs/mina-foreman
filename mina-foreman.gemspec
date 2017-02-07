@@ -1,9 +1,11 @@
 # coding: utf-8
-require "./lib/mina_foreman/version.rb"
+lib = File.expand_path('../lib', __FILE__)
+$LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
+require 'mina/foreman/version'
 
 Gem::Specification.new do |spec|
   spec.name          = 'mina-foreman'
-  spec.version       = MinaForeman.version
+  spec.version       = Mina::Foreman::VERSION
   spec.authors       = ['Stjepan Hadjic']
   spec.email         = ['d4be4st@gmail.com']
 
@@ -12,7 +14,7 @@ Gem::Specification.new do |spec|
   spec.homepage      = 'https://github.com/mina-deploy/mina-foreman'
   spec.license       = 'MIT'
 
-  spec.files = `git ls-files`.split("\n")
+  spec.files = `git ls-files -z`.split("\x0")
   spec.test_files = `git ls-files -- {test,spec,features}/*`.split("\n")
   spec.executables = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   spec.require_paths = ["lib"]
