@@ -27,7 +27,8 @@ namespace :foreman do
 
     if fetch(:foreman_format) == 'systemd'
       command %{
-        echo "-----> Reloading SystemD units for #{fetch(:foreman_app)}"
+        echo "-----> Enabling & reloading SystemD units for #{fetch(:foreman_app)}"
+        #{echo_cmd %[#{sudo_cmd} systemctl enable #{fetch(:foreman_service)}]}
         #{echo_cmd %[#{sudo_cmd} systemctl daemon-reload]}
       }
     end
