@@ -1,9 +1,10 @@
-set :foreman_app, -> { "#{fetch(:domain)}_#{fetch(:rails_env)}" }
+set :foreman_app, -> { "#{fetch(:application_name)}" }
 set :foreman_user, -> { fetch(:user) }
 set :foreman_log,  -> { "#{fetch(:shared_path)}/log" }
 set :foreman_sudo, true
-set :foreman_format, 'upstart'
+set :foreman_format, 'systemd'
 set :foreman_location, '/etc/init'
+
 set :foreman_service, -> {
   case fetch(:foreman_format)
   when 'systemd'
@@ -15,7 +16,8 @@ set :foreman_service, -> {
 set :foreman_procfile, 'Procfile'
 
 namespace :foreman do
-  desc 'Export the Procfile to Ubuntu upstart scripts'
+  
+  desc 'Export the Procfile to Ubuntu systemd scripts'
   task :export do
     sudo_cmd = "sudo" if fetch(:foreman_sudo)
     export_cmd = "#{sudo_cmd} bundle exec foreman export #{fetch(:foreman_format)} #{fetch(:foreman_location)} -a #{fetch(:foreman_app)} -u #{fetch(:foreman_user)} -d #{fetch(:current_path)} -l #{fetch(:foreman_log)} -f #{fetch(:foreman_procfile)}"
