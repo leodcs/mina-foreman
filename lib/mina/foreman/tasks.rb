@@ -28,7 +28,7 @@ namespace :foreman do
 
     comment "-----> Exporting foreman procfile for #{fetch(:foreman_app)}"
     in_path "#{fetch(:current_path)}" do
-      command %{ sudo bundle exec foreman export #{fetch(:foreman_format)} #{fetch(:foreman_location)} -a #{fetch(:foreman_app)} -u #{fetch(:foreman_user)} -d #{fetch(:current_path)} -l #{fetch(:foreman_log)} -f #{fetch(:foreman_procfile)} }
+      command %{ bundle exec foreman export #{fetch(:foreman_format)} #{fetch(:foreman_location)} -a #{fetch(:foreman_app)} -u #{fetch(:foreman_user)} -d #{fetch(:current_path)} -l #{fetch(:foreman_log)} -f #{fetch(:foreman_procfile)} }
     end
 
     if fetch(:foreman_format) == 'systemd'
