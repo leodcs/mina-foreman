@@ -26,9 +26,9 @@ namespace :foreman do
   desc 'Export the Procfile to init scripts'
   task :export do
 
-    comment "-----> Exporting foreman procfile for #{fetch(:foreman_app)}"
+    comment "-----> Exporting foreman Procfile for #{fetch(:foreman_app)}"
     in_path "#{fetch(:current_path)}" do
-      command %{ bundle exec foreman export #{fetch(:foreman_format)} #{fetch(:foreman_location)} -a #{fetch(:foreman_app)} -u #{fetch(:foreman_user)} -d #{fetch(:current_path)} -l #{fetch(:foreman_log)} -f #{fetch(:foreman_procfile)} }
+      command %{ sudo env PATH=$PATH bundle exec foreman export #{fetch(:foreman_format)} #{fetch(:foreman_location)} -a #{fetch(:foreman_app)} -u #{fetch(:foreman_user)} -d #{fetch(:current_path)} -l #{fetch(:foreman_log)} -f #{fetch(:foreman_procfile)} }
     end
 
     if fetch(:foreman_format) == 'systemd'
