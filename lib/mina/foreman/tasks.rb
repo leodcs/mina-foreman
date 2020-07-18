@@ -3,6 +3,7 @@
 set :foreman_app, -> { fetch(:application_name) }
 set :foreman_user, -> { fetch(:user) }
 set :foreman_log,  -> { "#{fetch(:shared_path)}/log" }
+set :foreman_env,  -> { "#{fetch(:shared_path)}/config/foreman.env" }
 
 set :foreman_format, 'systemd'
 set :foreman_location, -> {
@@ -23,18 +24,29 @@ set :foreman_service, -> {
 }
 set :foreman_procfile, 'Procfile'
 
+# rubocop:disable Metrics/BlockLength
 namespace :foreman do
   desc 'Export the Procfile to init scripts'
   task :export do
     comment "-----> Exporting foreman Procfile for #{fetch(:foreman_app)}"
     in_path fetch(:current_path).to_s do
-      command %( sudo env PATH=$PATH bundle exec foreman export #{fetch(:foreman_format)} #{fetch(:foreman_location)} -a #{fetch(:foreman_app)} -u #{fetch(:foreman_user)} -d #{fetch(:current_path)} -l #{fetch(:foreman_log)} -f #{fetch(:foreman_procfile)} )
+      command [
+        "sudo /home/#{fetch(:user)}/.rbenv/shims/bundle exec",
+        "foreman export #{fetch(:foreman_format)} #{fetch(:foreman_location)}",
+        "-a #{fetch(:foreman_app)}",
+        "-e #{fetch(:foreman_env)}",
+        "-u #{fetch(:foreman_user)}",
+        "-d #{fetch(:current_path)}",
+        "-l #{fetch(:foreman_log)}",
+        "-f #{fetch(:foreman_procfile)}"
+      ].join(' ')
     end
 
     if fetch(:foreman_format) == 'systemd'
-      comment "-----> Reloading and Enabling SystemD units for #{fetch(:foreman_app)}"
-      command %( sudo systemctl daemon-reload )
-      command %( sudo systemctl enable #{fetch(:foreman_app)}.target )
+      app_name = fetch(:foreman_app)
+      comment "-----> Reloading and Enabling SystemD units for #{app_name}"
+      command %(sudo systemctl daemon-reload)
+      command %(sudo systemctl enable #{app_name}.target)
     end
   end
 
@@ -70,7 +82,8 @@ namespace :foreman do
     when 'systemd'
       command %(sudo systemctl restart #{fetch(:foreman_service)})
     else
-      command %(sudo start #{fetch(:foreman_service)} || sudo restart #{fetch(:foreman_service)})
+      command %(sudo start #{fetch(:foreman_service)} ||
+                sudo restart #{fetch(:foreman_service)})
     end
   end
 
@@ -80,3 +93,4 @@ namespace :foreman do
     command %(sudo rm -r #{fetch(:foreman_location)}/#{fetch(:foreman_app)}*)
   end
 end
+# rubocop:enable Metrics/BlockLength
